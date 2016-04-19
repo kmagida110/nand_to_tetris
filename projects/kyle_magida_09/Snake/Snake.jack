@@ -1,0 +1,148 @@
+class Snake {
+
+    // Set start location
+    field Array x_array;
+    field Array y_array;
+
+    // Length of snake
+    field int length;
+
+    // Direction (1 North, 2 South, 3 East, 4 West)
+    field int direction;
+
+    /** Constructs a new square with a given location and size. Assumes initializing near 
+    center and oriented north, assumes no intializing edge cases where snake is near edge of screen*/
+    
+    constructor Snake new(int start_x, int start_y, int init_length, int direction) {
+        let x_array = Array.new(init_length);
+        let y_array = Array.new(init_length);
+        let length = init_length;
+        let direction = direction;
+        do set_initial_snake(start_x, start_y);  
+
+        return this;
+    }
+
+    /** Orients initial snake in given direction with no bends */
+    method void set_initial_snake(int x, int y){
+        var int counter;
+
+        let x_array[0] = x;
+        let y_array[0] = y;
+        
+        let counter = 1;
+        while(counter < length){
+            
+            if((direction = 1) | (direction = 2)){
+            let x_array[counter] = x;
+            }
+
+            if((direction = 3) | (direction = 4)){
+            let y_array[counter] = y; 
+            }
+
+            if(direction = 3){
+            let x_array[counter] = x + counter;
+            }
+
+            if(direction = 1){
+            let y_array[counter] = y + counter;
+            }
+
+            if(direction = 4){
+            let x_array[counter] = x - counter;
+            }
+
+            if(direction = 2){
+            let y_array[counter] = y - counter;
+            }
+            let counter = counter + 1;
+
+
+        }
+        do Screen.setColor(true);
+        let counter = 0;
+        while(counter < length){
+            do Screen.drawPixel(x_array[counter],y_array[counter]);
+            let counter = counter + 1;
+
+        }
+        return;
+        
+    }
+    method void set_direction(int new_direction){
+        let direction = new_direction;
+        return;
+    }
+
+    /** move snake in set direction */
+    method void move_snake(){
+
+        var int counter;
+        let counter = length - 1;
+        do Screen.setColor(false);
+        do Screen.drawPixel(x_array[counter],y_array[counter]);
+        do Screen.setColor(true);
+        
+        // Move each point through array to simulate movement
+        while(counter > 0){
+
+            let x_array[counter] = x_array[counter-1];
+            let y_array[counter] = y_array[counter-1];
+            let counter = counter - 1;
+            do Screen.drawPixel(x_array[counter],y_array[counter]);
+        }
+
+        if((direction = 1) | (direction = 2)){
+            let x_array[0] = x_array[0]; 
+            }
+
+            if((direction = 3) | (direction = 4)){
+            let y_array[0] = y_array[0]; 
+            }
+
+            if(direction = 3){
+            let x_array[0] = x_array[0] - 1;
+            }
+
+            if(direction = 1){
+            let y_array[0] = y_array[0] - 1;
+            }
+
+            if(direction = 4){
+            let x_array[0] = x_array[0] + 1;
+            }
+
+            if(direction = 2){
+            let y_array[0] = y_array[0] + 1;
+            }
+
+        do Screen.setColor(true);
+        do Screen.drawPixel(x_array[0],y_array[0]);
+        return;
+    }
+
+    // Check if in bounds
+    method boolean isOutOfBounds(){
+        
+        if( (x_array[0] < 1) | (x_array[0] > 510 )| (y_array[0] < 1) | (y_array[0] > 254)){
+        return true;
+        }
+        return false;
+    }
+
+    /** Deallocate memory */
+    method void dispose() {
+        do Memory.deAlloc(this);
+        return;
+    }
+
+    // Checks if given point matches head of snake
+    method boolean point_match(int x_match, int y_match){
+        if (((x_match = x_array[0]) | (x_match + 1 = x_array[0])) & ((y_match = y_array[0]) | (y_match + 1 = y_array[0]))){
+        return true;
+        }
+        return false;
+    }
+
+}

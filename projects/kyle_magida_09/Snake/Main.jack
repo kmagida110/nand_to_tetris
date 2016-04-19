@@ -1,0 +1,32 @@
+class Main {
+
+    /** Initializes a new game and starts it. */    
+    function void main() {
+        var SnakeGame game;
+        
+        // Describe game
+        do Output.printString("You have 45 seconds to get as many");
+        do Output.println();
+        do Output.printString("dots as you can without hitting a wall. Move using arrow keys");
+        do Output.println();
+        do Output.printString("Touch dots with snake to collect");
+        do Output.println();
+        do Output.printString("New dots will be created after old ones are collected.");
+        do Output.println();
+        do Output.printString("Game starts in 5 seconds");
+        do Sys.wait(5000);
+
+        do Screen.clearScreen();
+
+        let game = SnakeGame.new(30); // Snake of length 30
+        do game.run(450); // Set for 45 seconds (450 tenths of a second)
+
+        do Screen.clearScreen();
+        do Output.moveCursor(0,0);
+        do Output.printString("Your Score is: ");     
+        do Output.printInt(game.getPoints());
+        do game.dispose();
+
+        return;
+    }
+}

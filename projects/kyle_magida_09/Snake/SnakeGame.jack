@@ -1,0 +1,109 @@
+/**
+ * The 'q' key is used to quit the game.
+ */
+class SnakeGame {
+
+
+    field Snake snake;
+
+    field int x_point;
+    field int y_point;
+    field int counter;
+    field int direction;
+
+
+    constructor SnakeGame new(int length) {
+        // Create snake and set inital point
+        let snake = Snake.new(10,50,length,1);
+        let x_point = 50;
+        let y_point = 45;
+        let counter = 0;
+        let direction = 1;
+
+        return this;
+    }
+
+    /** Clear memory */
+    method void dispose() {
+        do snake.dispose();
+        do Memory.deAlloc(this);
+        return;
+    }
+
+    method int getPoints(){
+        return counter;
+    }
+    
+    /** Runs game until exit conditions apply*/
+
+    method void run(int max_time) {
+        var int timer;
+        var boolean exit;
+        var char key;
+
+
+        let timer = 0;
+        let exit = false;
+        do drawPoint(true);
+        while (~exit) {
+            
+            let key = Keyboard.keyPressed();
+
+            if (key = 81) {
+                let exit = true;
+            }
+            if (key = 131) {
+                let direction = 1;
+            }
+            if (key = 133) {
+                let direction = 2;
+            }
+            if (key = 130) {
+                let direction = 3;
+            }
+            if (key = 132) {
+                let direction = 4;
+            }
+
+            do snake.set_direction(direction);
+            do snake.move_snake();
+
+            if(snake.isOutOfBounds()){
+                do Output.moveCursor(0,0);
+                do Output.printString("Game Over, you hit a wall");
+                do Sys.wait(1000);
+                let exit = true;
+            }
+
+            if(snake.point_match(x_point, y_point)){
+                // If point is hit, erase point and determine new randomish point on screen
+                do drawPoint(false);
+                let counter = counter + 1;
+                let x_point = Math.abs(Math.divide(Math.multiply(Math.multiply(Math.multiply(timer,10000),x_point),789),500));
+                let y_point = Math.abs(Math.divide(Math.multiply(Math.multiply(Math.multiply(timer,10000),y_point),387),255));
+                do drawPoint(true);
+            }
+
+            // Allow movement every tenth of a second
+            do Sys.wait(100);
+            let timer = timer + 1;
+            if(timer > max_time){
+                let exit = true;
+            }
+
+
+        }
+            
+        return;
+	}
+    // Draw 2X2 representation of a given point
+     method void drawPoint(boolean color){
+            do Screen.setColor(color);
+            do Screen.drawPixel(x_point,y_point);
+            do Screen.drawPixel(x_point + 1,y_point + 1);
+            do Screen.drawPixel(x_point,y_point + 1);
+            do Screen.drawPixel(x_point + 1,y_point);
+            return;     
+     }
+
+}

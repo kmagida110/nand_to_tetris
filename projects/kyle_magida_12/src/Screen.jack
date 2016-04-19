@@ -1,0 +1,263 @@
+// This file is part of www.nand2tetris.org
+// and the book "The Elements of Computing Systems"
+// by Nisan and Schocken, MIT Press.
+// File name: projects/12/Screen.jack
+
+/**
+ * Graphic screen library.
+ */
+class Screen {
+    
+    static boolean color;
+    static int screen;
+    static int rowLen;
+    static int colLen;
+    static int colWidth;
+    static int numCols;
+    static Array bitValues;
+
+
+    /** Initializes the Screen. */
+    function void init() {
+        var int counter;
+        
+        let screen = 16384; // Beginning of screen in memory
+        let rowLen = 512;
+        let colLen = 256;
+        let colWidth = 16;
+        let numCols = rowLen/colWidth;
+        
+        let bitValues = Screen.binaryNums(16);
+        
+        
+
+
+        do Screen.clearScreen();
+        do Screen.setColor(true);
+        return;
+    }
+
+    /** Erases the whole screen. */
+    function void clearScreen() {
+        var int curRow;
+        var int curCol;
+        var int memLoc;
+        
+
+        let curRow = 0;
+
+        // Loop over all rows and pixels and set to clear.
+        while((curRow < colLen)){
+            let curCol = 0;
+            while((curCol < numCols)){
+
+            let memLoc = screen + curCol + (curRow * numCols);
+
+            do Memory.poke(memLoc,0); // Set every register to 0
+            let curCol = curCol + 1;
+
+
+            }
+            let curRow = curRow + 1;
+        }
+        return;
+    }
+
+    /** Sets the color to be used in further draw commands
+     *  where white = false, black = true. */
+    function void setColor(boolean b) {
+        
+        let color = b;
+        return;
+    }
+
+
+    /** Draws the (x, y) pixel. */
+    function void drawPixel(int x, int y) {
+        var int memLoc;
+        var int bitLoc;
+        var int memVal;
+        var int newVal;
+
+        let memLoc = screen + (y * numCols) + (x / colWidth);
+        let memVal = Memory.peek(memLoc);
+        let bitLoc = x - ((x/colWidth)*colWidth);
+
+
+        if (color){
+            let newVal = (memVal | bitValues[bitLoc]); // Or current value with 1 in the target position
+        }
+        else{   
+            let newVal = (memVal & (~bitValues[bitLoc])); // & current value with not of 1 in target position
+        }            
+        
+        do Memory.poke(memLoc,newVal);
+        return;
+
+    }
+    // Initialize array of integer values of a binary place when only that bit is flipped
+    function Array binaryNums(int numBits){
+
+        var Array returnArray;
+        var int counter;
+        var int curTotal;
+
+        let returnArray = Array.new(numBits);
+        let returnArray[0] = 1;
+        let counter = 1;
+        let curTotal = 1;
+        
+
+        while((counter < numBits)){
+            let curTotal = 2 * curTotal;
+            let returnArray[counter] = curTotal;
+
+            let counter = counter + 1;
+        }
+
+        return returnArray; 
+    }
+    /** For use in staight lines, called from drawLine */
+
+    function void drawStraightLine(int x1, int y1, int x2, int y2){
+        
+        var int min;
+        var int max;
+
+        if (x1 = x2){
+            
+            let min = Math.min(y1,y2);
+            let max = Math.max(y1,y2);
+            while((min < (max + 1))){
+                do Screen.drawPixel(x1,min);
+                let min = min + 1;
+            }
+        }
+        else{
+            
+            let min = Math.min(x1,x2);
+            let max = Math.max(x1,x2);
+
+            while((min < (max + 1))){
+            do Screen.drawPixel(min,y1);
+            let min = min + 1;
+
+            }
+        }
+        return;
+    }
+
+    /** Draws a line from (x1, y1) to (x2, y2). */
+    function void drawLine(int x1, int y1, int x2, int y2) {
+
+        var int dx;
+        var int dy;
+        var int temp;
+        var boolean yPos;
+        var int a;
+        var int b;
+        var int adyMinusbdx;
+
+        if ((x1 = x2) | (y1=y2)){
+            do Screen.drawStraightLine(x1,y1,x2,y2);
+            return;
+        }
+
+        let a = 0;
+        let b = 0;
+        let adyMinusbdx = 0;
+
+        // Make 1st point left most
+        if ((x2 < x1)){
+            let temp = x1;
+            let x1 = x2;
+            let x2 = temp;
+            let temp = y1;
+            let y1 = y2;
+            let y2 = temp;
+        }
+
+        let dx = x2 - x1;
+
+        if ((y2 < y1)){
+            let yPos = false;
+        }
+        else{
+            let yPos = true;
+        }
+
+        let dy = Math.abs((y2 - y1));
+
+        while((a < dx) & (b < dy)){
+
+            if (yPos){
+                do Screen.drawPixel((x1 + a),(y1 + b));
+            }
+            else{
+            do Screen.drawPixel((x1 + a), (y1 - b));
+            }
+
+            if ((adyMinusbdx < 0)){
+                let a = a + 1;
+                let adyMinusbdx = adyMinusbdx + dy;
+            }
+
+            else{
+                let b = b + 1;
+                let adyMinusbdx = adyMinusbdx - dx;
+            }
+        }
+
+        return;
+    }
+
+    /** Draws a filled rectangle where the top left corner
+     *  is (x1, y1) and the bottom right corner is (x2, y2). */
+    function void drawRectangle(int x1, int y1, int x2, int y2) {
+
+        var int xLoc;
+        var int yLoc;
+
+        let xLoc = x1;
+        let yLoc = y1;
+
+        while ((yLoc < y2)){
+
+            // Draw line at row Y
+
+            do Screen.drawLine(x1,yLoc,x2,yLoc);
+
+            // Move up one row
+            let yLoc = yLoc + 1;
+        }
+        return;
+    }
+
+    /** Draws a filled circle of radius r around (cx, cy). */
+    function void drawCircle(int cx, int cy, int r) {
+        var int i;
+        var int x1;
+        var int x2;
+        var int y1;
+        var int y2;
+        if ((r > 181)){
+            do Sys.error(1);// No radius larger than the screen height
+        }
+
+
+        let i = Math.abs(r);
+        let i = -i;
+
+        while((i < r)){
+
+            let x1 = (cx - Math.sqrt(((r*r) - (i * i) )));
+            let x2 = (cx + Math.sqrt(((r*r) - (i * i) )));
+            let y1 = cy + i;
+            let y2 = cy + i;
+
+            do Screen.drawLine(x1,y1,x2,y2);
+            let i = i + 1;
+        }
+        return;
+    }
+}

@@ -1,0 +1,157 @@
+// This file is part of www.nand2tetris.org
+// and the book "The Elements of Computing Systems"
+// by Nisan and Schocken, MIT Press.
+// File name: projects/12/String.jack
+
+/**
+ * Represents a String object. Implements the String type.
+ */
+class String_backup {
+
+    field int curLength;
+    field Array strArray;
+    field int initMaxLength;
+    static int newLineVal;
+    static int backSpaceVal;
+    static int doubleQuoteVal;
+
+    /** Constructs a new empty String with a maximum length of maxLength. */
+    constructor String new(int maxLength) {
+
+        var int counter;
+
+        // Create array and mark as empty
+        let strArray = Array.new(maxLength);
+        let initMaxLength = maxLength;
+        let curLength = 0;
+
+        while((counter < maxLength)){
+            let strArray[counter] = 0;
+            let counter = counter + 1;
+        }
+
+        // Initialize constants
+        let newLineVal = 128;
+        let backSpaceVal = 129;
+        let doubleQuoteVal = 34;
+        return this;
+
+    }
+
+    /** De-allocates the string and frees its space. */
+    method void dispose() {
+        do Memory.deAlloc(this);
+        return;
+    }
+
+    /** Returns the current length of this String. */
+    method int length() {
+
+        return curLength;
+    }
+
+    /** Returns the character at location j. */
+    method char charAt(int j) {
+        var int memLoc;
+        var char retChar;
+        let memLoc = strArray + j;
+        let retChar = Memory.peek(memLoc);
+        return retChar;
+    }
+
+    /** Sets the j'th character of this string to be c. */
+    method void setCharAt(int j, char c) {
+        var int memLoc;
+        let memLoc = strArray + j;
+        do Memory.poke(memLoc,c);
+        return;
+    }
+
+    /** Appends the character c to the end of this String.
+     *  Returns this string as the return value. */
+    method String appendChar(char c) {
+
+        var int memLoc;
+    
+
+        let memLoc = strArray + curLength
+        do Memory.poke(memLoc,c);
+        let curLength = curLength + 1;
+        return this;
+
+    }
+
+    /** Erases the last character from this String. */
+    method void eraseLastChar() {
+
+        // Set end of array to 0
+        let curLength = curLength - 1;
+        do Memory.poke((strArray + curLength),0)        
+        return;
+
+    }
+
+    /** Returns the integer value of this String until the first non
+     *  numeric character. */
+    method int intValue() {
+        var int counter;
+        var int tempVal;
+        var int returnVal;
+        var boolean neg;
+
+
+        // Check if number is negative
+        if((strArray[0] = 45)){
+            let neg = true;
+            let counter = 1;
+        }
+        else{
+
+            let neg = false;
+            let counter = 0;
+        }
+
+        // Loop over string
+        let returnVal = 0;
+        let counter = 0;
+        
+        while((counter < curLength)){
+
+            let tempVal = strArray[counter];
+
+            if((tempVal > 47) & (tempVal < 58)){
+
+                let tempVal = tempVal - 48; // Adjust for ASCII
+                let returnVal = returnVal * 10 + tempVal; // Move places and add tempVal
+                let counter = counter + 1;        
+
+
+            }
+
+            else{
+                if(neg){
+                 return (0 - returnVal);
+                }
+                else{
+                return returnVal;  // Return at first non-integer character
+                }
+            }
+        }
+        return returnVal;
+    }
+
+    /** Returns the new line character. */
+    function char newLine() {
+        return newLineVal;
+    }
+
+    /** Returns the backspace character. */
+    function char backSpace() {
+        return backSpaceVal;
+    }
+
+    /** Returns the double quote (") character. */
+    function char doubleQuote() {
+        return doubleQuoteVal;
+    }
+}

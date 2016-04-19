@@ -1,0 +1,89 @@
+/**
+ * The 'q' key is used to quit the game.
+ */
+class SnakeGame {
+
+
+    field Snake snake;
+
+    field int x_point;
+    field int y_point;
+    field int counter;
+
+
+    constructor SnakeGame new(int num_points, int length) {
+        let snake = Snake.new(125,256,length,1);
+        let x_point = 200;
+        let y_point = 100;
+        let counter = 0;
+
+        return this;
+    }
+
+    
+    method void dispose() {
+        do Snake.dispose();
+        do Memory.deAlloc(this);
+        return;
+    }
+
+    method int getPoints(){
+        return counter;
+    }
+    /** Starts the game. Handles inputs from the user that control
+     *  the square's movement, direction and size. */
+
+    method void run(int max_time) {
+        var int timer;
+        var boolean exit;
+        var char key;
+
+
+        let timer = 0;
+        let exit = false;
+        while (~exit) {
+            
+            let key = Keyboard.keyPressed();
+
+            if (key = 81) {
+                let exit = true;
+            }
+            if (key = 131) {
+                let direction = 1;
+            }
+            if (key = 133) {
+                let direction = 2;
+            }
+            if (key = 130) {
+                let direction = 3;
+            }
+            if (key = 132) {
+                let direction = 4;
+            }
+
+            snake.set_direction(direction);
+            snake.move_snake();
+
+            if(snake.isOutOfBounds()){
+                let exit = true;
+            }
+
+            if(snake.point_match(x_point, y_point)){
+                let counter = counter + 1;
+                let x_point = (timer * x_point * 13) / 511;
+                let y_point = (timer * x_point *13) / 255;
+            }
+
+            do Sys.wait(100);
+            let timer = timer + 100;
+            if(time > max_time){
+                let exit = true;
+            }
+
+
+        }
+            
+        return;
+	}
+
+}

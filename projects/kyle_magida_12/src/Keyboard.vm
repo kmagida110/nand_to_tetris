@@ -1,0 +1,517 @@
+function Keyboard.init 0
+push constant 24576
+pop static 0
+push constant 200
+pop static 1
+push constant 0
+return
+function Keyboard.keyPressed 1
+push static 0
+call Memory.peek 1
+pop local 0
+push local 0
+push constant 152
+gt
+push local 0
+push constant 0
+eq
+or
+if-goto Keyboard.keyPressed.0.TRUE
+goto Keyboard.keyPressed.1.FALSE
+label Keyboard.keyPressed.0.TRUE
+push constant 0
+return
+label Keyboard.keyPressed.1.FALSE
+push local 0
+return
+function Keyboard.readChar 3
+label Keyboard.readChar.0.LOOP
+push local 0
+not
+not
+if-goto Keyboard.readChar.1.CONTINUE
+call Keyboard.keyPressed 0
+pop local 0
+push local 0
+if-goto Keyboard.readChar.2.TRUE
+goto Keyboard.readChar.3.FALSE
+label Keyboard.readChar.2.TRUE
+push constant 0
+not
+pop local 1
+label Keyboard.readChar.5.LOOP
+push local 1
+not
+if-goto Keyboard.readChar.6.CONTINUE
+push constant 5
+call Sys.wait 1
+pop temp 0
+call Keyboard.keyPressed 0
+pop local 2
+push local 2
+push constant 0
+eq
+if-goto Keyboard.readChar.7.TRUE
+goto Keyboard.readChar.8.FALSE
+label Keyboard.readChar.7.TRUE
+push constant 0
+pop local 1
+label Keyboard.readChar.8.FALSE
+goto Keyboard.readChar.5.LOOP
+label Keyboard.readChar.6.CONTINUE
+push local 0
+call Output.printChar 1
+pop temp 0
+push local 0
+return
+label Keyboard.readChar.3.FALSE
+goto Keyboard.readChar.0.LOOP
+label Keyboard.readChar.1.CONTINUE
+push local 0
+call Output.printChar 1
+pop temp 0
+push local 0
+return
+function Keyboard.readLine 4
+push static 1
+call String.new 1
+pop local 0
+push constant 0
+pop local 2
+push argument 0
+call Output.printString 1
+pop temp 0
+call Keyboard.readChar 0
+pop local 1
+push constant 0
+not
+pop local 3
+label Keyboard.readLine.0.LOOP
+push local 3
+not
+if-goto Keyboard.readLine.1.CONTINUE
+push local 1
+call String.backSpace 0
+eq
+if-goto Keyboard.readLine.2.TRUE
+goto Keyboard.readLine.3.FALSE
+label Keyboard.readLine.2.TRUE
+push local 0
+call String.eraseLastChar 1
+pop temp 0
+push local 2
+push constant 1
+sub
+pop local 2
+push constant 50
+call Sys.wait 1
+pop temp 0
+call Keyboard.readChar 0
+pop local 1
+goto Keyboard.readLine.4.CONTINUE
+label Keyboard.readLine.3.FALSE
+push local 0
+push local 1
+call String.appendChar 2
+pop local 0
+push local 2
+push constant 1
+add
+pop local 2
+push local 2
+push static 1
+gt
+if-goto Keyboard.readLine.5.TRUE
+goto Keyboard.readLine.6.FALSE
+label Keyboard.readLine.5.TRUE
+push constant 22
+call String.new 1
+push constant 76
+call String.appendChar 2
+push constant 105
+call String.appendChar 2
+push constant 110
+call String.appendChar 2
+push constant 101
+call String.appendChar 2
+push constant 32
+call String.appendChar 2
+push constant 105
+call String.appendChar 2
+push constant 115
+call String.appendChar 2
+push constant 32
+call String.appendChar 2
+push constant 116
+call String.appendChar 2
+push constant 111
+call String.appendChar 2
+push constant 111
+call String.appendChar 2
+push constant 32
+call String.appendChar 2
+push constant 108
+call String.appendChar 2
+push constant 111
+call String.appendChar 2
+push constant 110
+call String.appendChar 2
+push constant 103
+call String.appendChar 2
+push constant 32
+call String.appendChar 2
+push constant 111
+call String.appendChar 2
+push constant 110
+call String.appendChar 2
+push constant 108
+call String.appendChar 2
+push constant 121
+call String.appendChar 2
+push constant 32
+call String.appendChar 2
+call Output.printString 1
+pop temp 0
+push static 1
+call Output.printInt 1
+pop temp 0
+push constant 24
+call String.new 1
+push constant 32
+call String.appendChar 2
+push constant 99
+call String.appendChar 2
+push constant 104
+call String.appendChar 2
+push constant 97
+call String.appendChar 2
+push constant 114
+call String.appendChar 2
+push constant 97
+call String.appendChar 2
+push constant 99
+call String.appendChar 2
+push constant 116
+call String.appendChar 2
+push constant 101
+call String.appendChar 2
+push constant 114
+call String.appendChar 2
+push constant 115
+call String.appendChar 2
+push constant 32
+call String.appendChar 2
+push constant 97
+call String.appendChar 2
+push constant 114
+call String.appendChar 2
+push constant 101
+call String.appendChar 2
+push constant 32
+call String.appendChar 2
+push constant 97
+call String.appendChar 2
+push constant 108
+call String.appendChar 2
+push constant 108
+call String.appendChar 2
+push constant 111
+call String.appendChar 2
+push constant 119
+call String.appendChar 2
+push constant 101
+call String.appendChar 2
+push constant 100
+call String.appendChar 2
+push constant 46
+call String.appendChar 2
+call Output.printString 1
+pop temp 0
+label Keyboard.readLine.6.FALSE
+call Keyboard.readChar 0
+pop local 1
+push local 1
+call String.newLine 0
+eq
+if-goto Keyboard.readLine.8.TRUE
+goto Keyboard.readLine.9.FALSE
+label Keyboard.readLine.8.TRUE
+call Output.println 0
+pop temp 0
+push local 0
+return
+label Keyboard.readLine.9.FALSE
+label Keyboard.readLine.4.CONTINUE
+goto Keyboard.readLine.0.LOOP
+label Keyboard.readLine.1.CONTINUE
+call Output.println 0
+pop temp 0
+push local 0
+return
+function Keyboard.readInt 8
+push constant 10
+call Array.new 1
+pop local 2
+push constant 0
+pop local 3
+push argument 0
+call Output.printString 1
+pop temp 0
+call Keyboard.readChar 0
+pop local 0
+push local 0
+push constant 47
+lt
+push local 0
+push constant 58
+gt
+or
+if-goto Keyboard.readInt.0.TRUE
+goto Keyboard.readInt.1.FALSE
+label Keyboard.readInt.0.TRUE
+push local 0
+push constant 45
+eq
+if-goto Keyboard.readInt.3.TRUE
+goto Keyboard.readInt.4.FALSE
+label Keyboard.readInt.3.TRUE
+push constant 0
+not
+pop local 1
+goto Keyboard.readInt.5.CONTINUE
+label Keyboard.readInt.4.FALSE
+push constant 38
+call String.new 1
+push constant 77
+call String.appendChar 2
+push constant 117
+call String.appendChar 2
+push constant 115
+call String.appendChar 2
+push constant 116
+call String.appendChar 2
+push constant 32
+call String.appendChar 2
+push constant 115
+call String.appendChar 2
+push constant 116
+call String.appendChar 2
+push constant 97
+call String.appendChar 2
+push constant 114
+call String.appendChar 2
+push constant 116
+call String.appendChar 2
+push constant 32
+call String.appendChar 2
+push constant 119
+call String.appendChar 2
+push constant 105
+call String.appendChar 2
+push constant 116
+call String.appendChar 2
+push constant 104
+call String.appendChar 2
+push constant 32
+call String.appendChar 2
+push constant 97
+call String.appendChar 2
+push constant 110
+call String.appendChar 2
+push constant 32
+call String.appendChar 2
+push constant 105
+call String.appendChar 2
+push constant 110
+call String.appendChar 2
+push constant 116
+call String.appendChar 2
+push constant 101
+call String.appendChar 2
+push constant 103
+call String.appendChar 2
+push constant 101
+call String.appendChar 2
+push constant 114
+call String.appendChar 2
+push constant 44
+call String.appendChar 2
+push constant 32
+call String.appendChar 2
+push constant 116
+call String.appendChar 2
+push constant 114
+call String.appendChar 2
+push constant 121
+call String.appendChar 2
+push constant 32
+call String.appendChar 2
+push constant 97
+call String.appendChar 2
+push constant 103
+call String.appendChar 2
+push constant 97
+call String.appendChar 2
+push constant 105
+call String.appendChar 2
+push constant 110
+call String.appendChar 2
+push constant 33
+call String.appendChar 2
+call Output.printString 1
+pop temp 0
+label Keyboard.readInt.5.CONTINUE
+goto Keyboard.readInt.2.CONTINUE
+label Keyboard.readInt.1.FALSE
+push constant 0
+pop local 1
+push constant 0
+push local 2
+add
+push local 0
+push constant 48
+sub
+pop temp 0
+pop pointer 1
+push temp 0
+pop that 0
+push local 3
+push constant 1
+add
+pop local 3
+label Keyboard.readInt.2.CONTINUE
+call Keyboard.readChar 0
+pop local 0
+label Keyboard.readInt.6.LOOP
+push local 0
+push constant 47
+gt
+push local 0
+push constant 58
+lt
+and
+push local 0
+call String.backSpace 0
+eq
+or
+not
+if-goto Keyboard.readInt.7.CONTINUE
+push local 0
+call String.backSpace 0
+eq
+if-goto Keyboard.readInt.8.TRUE
+goto Keyboard.readInt.9.FALSE
+label Keyboard.readInt.8.TRUE
+push local 3
+push constant 0
+gt
+if-goto Keyboard.readInt.11.TRUE
+goto Keyboard.readInt.12.FALSE
+label Keyboard.readInt.11.TRUE
+push local 3
+push constant 1
+sub
+pop local 3
+label Keyboard.readInt.12.FALSE
+push constant 20
+call Sys.wait 1
+pop temp 0
+call Keyboard.readChar 0
+pop local 0
+push local 3
+push constant 0
+eq
+if-goto Keyboard.readInt.14.TRUE
+goto Keyboard.readInt.15.FALSE
+label Keyboard.readInt.14.TRUE
+push local 0
+push constant 45
+eq
+if-goto Keyboard.readInt.17.TRUE
+goto Keyboard.readInt.18.FALSE
+label Keyboard.readInt.17.TRUE
+push constant 0
+not
+pop local 1
+call Keyboard.readChar 0
+pop local 0
+label Keyboard.readInt.18.FALSE
+label Keyboard.readInt.15.FALSE
+goto Keyboard.readInt.10.CONTINUE
+label Keyboard.readInt.9.FALSE
+push local 3
+push local 2
+add
+push local 0
+push constant 48
+sub
+pop temp 0
+pop pointer 1
+push temp 0
+pop that 0
+push local 3
+push constant 1
+add
+pop local 3
+call Keyboard.readChar 0
+pop local 0
+label Keyboard.readInt.10.CONTINUE
+goto Keyboard.readInt.6.LOOP
+label Keyboard.readInt.7.CONTINUE
+label Keyboard.readInt.20.LOOP
+push local 3
+push constant 1
+neg
+gt
+not
+if-goto Keyboard.readInt.21.CONTINUE
+push local 3
+push constant 1
+sub
+pop local 5
+push local 3
+push local 2
+add
+pop pointer 1
+push that 0
+pop local 6
+label Keyboard.readInt.22.LOOP
+push local 5
+push constant 1
+neg
+gt
+not
+if-goto Keyboard.readInt.23.CONTINUE
+push local 6
+push constant 10
+call Math.multiply 2
+pop local 6
+push local 5
+push constant 1
+sub
+pop local 5
+goto Keyboard.readInt.22.LOOP
+label Keyboard.readInt.23.CONTINUE
+push local 7
+push local 6
+add
+pop local 7
+push local 3
+push constant 1
+sub
+pop local 3
+goto Keyboard.readInt.20.LOOP
+label Keyboard.readInt.21.CONTINUE
+push local 1
+if-goto Keyboard.readInt.24.TRUE
+goto Keyboard.readInt.25.FALSE
+label Keyboard.readInt.24.TRUE
+push constant 0
+push local 7
+sub
+return
+goto Keyboard.readInt.26.CONTINUE
+label Keyboard.readInt.25.FALSE
+push local 7
+return
+label Keyboard.readInt.26.CONTINUE

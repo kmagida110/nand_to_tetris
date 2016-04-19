@@ -1,0 +1,252 @@
+// This file is part of www.nand2tetris.org
+// and the book "The Elements of Computing Systems"
+// by Nisan and Schocken, MIT Press.
+// File name: projects/12/Keyboard.jack
+
+/**
+ * A library for handling user input from the keyboard.
+ */
+class Keyboard {
+
+    static int keyboardMem;
+    static int startingLen;
+
+    /** Initializes the keyboard. */
+    function void init() {
+        // Initialize keyboard location
+        let keyboardMem = 24576;
+        let startingLen = 200; // Maximum of 200 characters per line, more than a complete line of the screen
+        return;
+    } 
+
+    /**
+     * Returns the ASCII code (as char) of the currently pressed key,
+     * or 0 if no key is currently pressed.
+     * Recognizes all ASCII characters, as well as the following extension
+     * of action keys:
+     * New line = 128 = String.newline()
+     * Backspace = 129 = String.backspace()
+     * Left Arrow = 130
+     * Up Arrow = 131
+     * Right Arrow = 132
+     * Down Arrow = 133
+     * Home = 134
+     * End = 135
+     * Page Up = 136
+     * Page Down = 137
+     * Insert = 138
+     * Delete = 139
+     * ESC = 140
+     * F1 - F12 = 141 - 152
+     */
+    function char keyPressed() {
+
+        var char pressedKey;
+        let pressedKey = Memory.peek(keyboardMem);
+
+        if((pressedKey > 152) | (pressedKey = 0)){
+            return 0;
+
+        }
+        return pressedKey;
+    }
+
+    /**								
+     * Reads the next character from the keyboard.
+     * waits until a key is pressed and then released, then echoes
+     * the key to the screen, and returns the value of the pressed key.
+     */
+    function char readChar() {
+
+        var int key;
+        var boolean inLoop;
+        var int checkKey;
+
+
+
+        // Loop until key is pressed and return character
+        while(~key){
+        let key = Keyboard.keyPressed();
+
+            if(key){
+                // Wait until key is not pressed and return
+                let inLoop = true;
+
+                while(inLoop){
+                
+                do Sys.wait(5);
+                let checkKey = Keyboard.keyPressed();
+                if (checkKey = 0){
+                    let inLoop = false;
+                    }
+
+                }
+                do Output.printChar(key);
+                return key;
+                
+            }
+            
+        }
+
+        do Output.printChar(key);
+        return key;
+    }
+
+    /**								
+     * Prints the message on the screen, reads the next line
+     * (until a newline character) from the keyboard, and returns its value.
+     */
+    function String readLine(String message) {
+        var String returnString;
+        var char curChar;
+        var int curLen;
+        var boolean loop;
+
+        let returnString = String.new(startingLen);
+        let curLen = 0;
+
+        do Output.printString(message);       
+
+        // Read first character
+        let curChar = Keyboard.readChar();
+        let loop = true;
+        
+
+        while(loop){
+
+            // backspace
+
+            if (curChar = String.backSpace()){
+                do returnString.eraseLastChar();
+                let curLen = curLen - 1;
+                do Sys.wait(50);
+                let curChar = Keyboard.readChar();
+            }
+            else{
+
+            // Add to String
+            let returnString = returnString.appendChar(curChar);
+            let curLen = curLen + 1;
+
+            // String overflow
+            if (curLen > startingLen){
+                do Output.printString("Line is too long only ");
+                do Output.printInt(startingLen);
+                do Output.printString(" characters are allowed.");
+
+
+            }
+
+            let curChar = Keyboard.readChar();
+
+            // Break loop if enter
+            if (curChar = String.newLine()){
+                do Output.println();
+                return returnString;
+                }
+
+            }         
+            
+        }
+        do Output.println();
+        return returnString;
+
+    }   
+
+    /**								
+     * Prints the message on the screen, reads the next line
+     * (until a newline character) from the keyboard, and returns its
+     * integer value (until the first non numeric character).
+     */
+    function int readInt(String message) {
+        var int curChar;
+        var bool neg;
+        var Array digits;
+        var int arrayLen;
+        var int returnVal;
+        var int placeCounter;
+        var int tempVal;
+        var int val;
+
+        let digits = Array.new(10);
+        let arrayLen = 0;
+
+        do Output.printString(message);
+
+        // Get first character and make sure it is an integer
+        
+        let curChar = Keyboard.readChar();
+        if ((curChar < 47) | (curChar > 58)){
+            if (curChar = 45){
+                let neg = true;
+
+            }
+            else{
+            
+            do Output.printString("Must start with an integer, try again!");
+            }
+        }
+
+        // Positive number
+        else{
+            let neg = false;
+            let digits[0] = curChar - 48;
+            let arrayLen = arrayLen + 1;
+
+        }
+
+        
+        let curChar = Keyboard.readChar();
+
+        while(((curChar > 47) & (curChar < 58)) | (curChar = String.backSpace())) {
+            if (curChar = String.backSpace()){
+                if (arrayLen > 0){
+                    let arrayLen = arrayLen - 1;
+
+                }
+                do Sys.wait(20);
+                let curChar = Keyboard.readChar();
+                // If backspaced to start, allow for negative
+                if ((arrayLen = 0)){
+                    if (curChar = 45){
+                        let neg = true;
+                        let curChar = Keyboard.readChar();
+                        }
+                        
+                }
+            }
+            else{            
+                let digits[arrayLen] = curChar - 48;
+                let arrayLen = arrayLen + 1;
+                let curChar = Keyboard.readChar();
+            }
+
+        }
+
+        // Calculate return value
+        while((arrayLen > -1)) {
+            let placeCounter = arrayLen - 1;
+            let tempVal = digits[arrayLen];
+            
+            // Adjust final value for each digit
+            while((placeCounter) > -1){
+                let tempVal = tempVal * 10;
+                let placeCounter = placeCounter - 1;
+            }
+            
+            let val = val + tempVal;
+            let arrayLen = arrayLen - 1;
+
+        }
+
+        if (neg){
+            return (0 - val);
+        }
+        else{
+            return val;
+            }
+        
+
+      
+    }
+}

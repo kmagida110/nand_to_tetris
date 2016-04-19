@@ -1,0 +1,16 @@
+class Main {
+
+    /** Initializes a new game and starts it. */    
+    function void main() {
+        var SnakeGame game;
+
+        let game = SnakeGame.new();
+        do game.run();
+        do Output.moveCursor(125,256);
+        do Output.printString("Your Score is:");
+        do Output.printInt(game.getPoints());
+        do game.dispose();
+
+        return;
+    }
+}

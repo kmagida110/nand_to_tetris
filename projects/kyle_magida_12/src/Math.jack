@@ -1,0 +1,203 @@
+// This file is part of www.nand2tetris.org
+// and the book "The Elements of Computing Systems"
+// by Nisan and Schocken, MIT Press.
+// File name: projects/12/Math.jack
+
+/**
+ * A basic math library.
+ */
+class Math {
+    
+    static Array binaryArray;
+
+    /** Initializes the library. */
+    function void init() {
+        let binaryArray = Array.new(15); // Needs to be hardcoded, function would require multiplication
+        let binaryArray[0] = 1;
+        let binaryArray[1] = 2;
+        let binaryArray[2] = 4;
+        let binaryArray[3] = 8;
+        let binaryArray[4] = 16;
+        let binaryArray[5] = 32;
+        let binaryArray[6] = 64;
+        let binaryArray[7] = 128;
+        let binaryArray[8] = 256;
+        let binaryArray[9] = 512;
+        let binaryArray[10] = 1024;
+        let binaryArray[11] = 2048;
+        let binaryArray[12] = 4096;
+        let binaryArray[13] = 8192;
+        let binaryArray[14] = 16384;
+
+        
+
+        return;
+    }
+
+    /** Returns the absolute value of x. */
+    function int abs(int x) {
+
+        if((x < 0)){
+            return (0 - x);
+        }
+        else{
+            return x;
+        }
+    }
+
+    /** Returns the product of x and y. */
+    function int multiply(int x, int y) {
+        var int sum;
+        var int shiftedX;
+        var int counter;
+        var int absY;
+
+        if (((x=0)|(y=0))){
+            return 0;
+        }
+
+        let sum = 0;
+        let shiftedX = Math.abs(x);
+        let absY = Math.abs(y);
+        let counter = 0;
+        
+
+        while((counter < 15)){
+            if(Math.bit(absY,counter)){
+                let sum = sum + shiftedX;
+                
+            }
+            let shiftedX = shiftedX + shiftedX;
+            let counter = counter + 1;
+        }
+
+        // Initially used for overflow testing
+        //if ((sum < 0)){
+            //do Output.printString("overflow");
+            //do Output.printInt(sum);
+            //do Output.printInt(x);
+            //do Output.printInt(y);
+
+        //}
+
+
+        if (((x > 0) & (y < 0)) | ((x < 0) & (y > 0))){
+            return 0 - sum;
+        }
+        else{
+            return sum;
+        }
+            
+
+    }
+
+    function boolean bit(int x, int j){
+
+        
+        if ((( binaryArray[j] & x) = binaryArray[j])){  // checks if single bit is in x, otherwise will be 0
+            
+            return true;
+        }
+        else{
+        return false;
+        }
+
+
+    }
+    /** Returns the integer part of x/y. */
+    function int divide(int x, int y) {
+        var int q;
+        var boolean neg;
+
+        // Determine sign of answer before getting absolute value
+        if (((x > 0) & (y < 0)) | ((x < 0) & (y > 0))){
+            let neg = true;
+         }
+         else{
+            let neg = false;
+         }
+
+        let x = Math.abs(x);
+        let y = Math.abs(y);
+
+
+        if((y > x)){
+            return 0;
+        }
+
+        let q = Math.divide(x,2*y);
+        if (((x - (2 * q * y) ) < y)){
+
+            if (neg){
+                return 0 - (2*q);
+            }
+            else{
+                return 2 * q;
+            }
+        }
+
+        else{
+            if (neg){
+                return 0 - ((2*q) + 1);
+            }
+            else{
+                return (2*q) + 1;
+            }
+        }
+    
+    }
+
+    /** Returns the integer part of the square root of x. */
+    function int sqrt(int x) {
+        var int y;
+        var int i;
+        var int curVal;
+        var int curValSq;
+
+        let y = 0;
+        let i = 7; //n = 16, n/2 - 1 
+
+        while ((i > -1)){
+
+
+            let curVal = y + binaryArray[i];
+            let curValSq = curVal * curVal;
+
+            
+            if ( ( ~(curValSq > x) & (curValSq > 0) ) ){
+                let y = curVal;
+            }
+            let i = i - 1;
+
+        
+        }
+
+        return y; 
+
+
+
+    }
+
+    /** Returns the greater number. */
+    function int max(int a, int b) {
+
+        if((a < b)){
+            return b;
+        }
+        else{
+            return a;
+        }
+    }
+
+    /** Returns the smaller number. */
+    function int min(int a, int b) {
+
+        if((a < b)){
+            return a;
+        }
+        else{
+            return b;
+        }
+    }
+     
+}

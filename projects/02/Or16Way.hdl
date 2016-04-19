@@ -1,0 +1,11 @@
+CHIP Or16Way {
+    IN in[16];
+    OUT out;
+
+    PARTS:
+    Or8Way(a=in[0..7],out=pin07);
+    Or8Way(a=in[8..15],out=pin815);
+
+    //Final Output
+    Or(a=pin07,b=pin815,out=out);
+}
